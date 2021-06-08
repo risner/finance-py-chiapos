@@ -12,7 +12,6 @@ LICENSE=	APACHE20
 LICENSE_FILE=	${WRKSRC}/LICENSE
 
 BUILD_DEPENDS=	${PYTHON_PKGNAMEPREFIX}setuptools_scm>=3.5.0:devel/py-setuptools_scm@${PY_FLAVOR} \
-		cmake>=3.12:devel/cmake \
 		pybind11>0:devel/pybind11
 
 USES=		cmake:noninja python:3.7+
