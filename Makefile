@@ -52,6 +52,7 @@ do-install:
 	@(cd ${INSTALL_WRKSRC} && ${SETENV} ${MAKE_ENV} ${FAKEROOT} ${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
 # Do python install
 	${INSTALL_LIB} ${BUILD_WRKSRC}/${PORTNAME}.cpython-${PYTHON_SUFFIX}.so ${STAGEDIR}${PREFIX}/lib
+# Try to make site-packages?
 	(cd ${STAGEDIR}${PREFIX} && ${PYTHON_CMD} \
 		${PYTHON_LIBDIR}/compileall.py -d ${PREFIX} \
 		-f ${PYTHONPREFIX_SITELIBDIR:S,${PREFIX}/,,})
