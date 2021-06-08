@@ -2,4 +2,8 @@ Chia's proof of space is written in C++. Includes a plotter, prover, and
 verifier. It exclusively runs on 64 bit architectures. Read the Proof of
 Space document to learn about what proof of space is and how it works.
 
+Note (where should these go?):
+The GHC reference has nothing to do with Haskell.
+HellmanAttacks is experimental, and does not currently compile.
+
 WWW: https://github.com/Chia-Network/chiapos
