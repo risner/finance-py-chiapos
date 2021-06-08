@@ -20,21 +20,14 @@ USE_GITHUB=	nodefault
 GH_TUPLE=	jarro2783:cxxopts:302302b30839505703d37fb82f536c53cf9172fa:c/src-ext/cxxopts \
 		gulrak:filesystem:4e21ab305794f5309a1454b4ae82ab9a0f5e0d25:g/src-ext/gulrak
 USE_PYTHON=	concurrent distutils
-# USE_PYTHON=     autoplist concurrent distutils
+PYSETUP=	${WRKSRC}/setup.py
 CMAKE_ARGS+=	-DCOMPILER_CXXFLAGS="${CXXFLAGS}" \
 		-DCOMPILER_FLAGS="${CFLAGS}"
-
-# Used to test stripping/not stripping
-#WITH_DEBUG=	yes
-
-# ?? -DOPENCASCADE_INCLUDE_DIR=${OCCT} -DPYTHON_EXECUTABLE=${PYTHON_CMD}
-# ?? CMAKE_ARGS+=    -DPYTHON_VERSION:STRING=${PYTHON_VER}
 
 post-extract:
 	@${CP} ${FILESDIR}/Hellman-Makefile ${WRKSRC}/hellman_example/Makefile
 
 do-build:
-# Do cmake build
 	@(cd ${BUILD_WRKSRC}; if ! ${DO_MAKE_BUILD} ${ALL_TARGET}; then \
 		if [ -n "${BUILD_FAIL_MESSAGE}" ] ; then \
 			${ECHO_MSG} "===> Compilation failed unexpectedly."; \
@@ -42,30 +35,25 @@ do-build:
 			fi; \
 		${FALSE}; \
 		fi)
-# Strip if desired
 	@(cd ${BUILD_WRKSRC} && ${STRIP_CMD} ProofOfSpace RunTests ${PORTNAME}.cpython-${PYTHON_SUFFIX}.so)
-# Do python build
-# (cd ${WRKSRC}; ${SETENV} ${MAKE_ENV} ${PYTHON_CMD} ${PYDISTUTILS_SETUP} ${PYDISTUTILS_BUILD_TARGET} ${PYDISTUTILS_BUILDARGS})
 
+# The upstream uses cmake as a subroutine from python setuptools.
+#	To handle this, I must compile the C code via cmake, and run distutils
+#	from a curated directory in ${INSTALL_WRKSRC}.
+# Currently I don't know how to teach setuptools to look in a directory
+#	other than ${INSTALL_WRKSRC}/build/lib.${os}-${plat}-${PYTHON_SUFFIX}.
 do-install:
-# Do cmake install
 	@(cd ${INSTALL_WRKSRC} && ${SETENV} ${MAKE_ENV} ${FAKEROOT} ${MAKE_CMD} ${MAKE_FLAGS} ${MAKEFILE} ${MAKE_ARGS} ${INSTALL_TARGET})
-# Do python install
-	${INSTALL_LIB} ${BUILD_WRKSRC}/${PORTNAME}.cpython-${PYTHON_SUFFIX}.so ${STAGEDIR}${PREFIX}/lib
-# Try to make site-packages?
-	(cd ${STAGEDIR}${PREFIX} && ${PYTHON_CMD} \
-		${PYTHON_LIBDIR}/compileall.py -d ${PREFIX} \
-		-f ${PYTHONPREFIX_SITELIBDIR:S,${PREFIX}/,,})
-	(cd ${STAGEDIR}${PREFIX} && ${PYTHON_CMD} -O \
-		${PYTHON_LIBDIR}/compileall.py \
-		-d ${PREFIX} -f ${PYTHONPREFIX_SITELIBDIR:S,${PREFIX}/,,})
-
-#	${INSTALL_LIB} ${WRKDIR}/.build/${PORTNAME}.cpython-${PYTHON_SUFFIX}.so ${STAGEDIR}${PREFIX}/lib
-#	${INSTALL_DATA} ${WRKDIR}/.build/${PORTNAME}.cpython-${PYTHON_SUFFIX}.so ${STAGEDIR}${PREFIX}/lib
-#	# Do python install
-#	# @(cd ${INSTALL_WRKSRC}; ${SETENV} ${MAKE_ENV} ${PYTHON_CMD} ${PYDISTUTILS_SETUP} ${PYDISTUTILS_INSTALL_TARGET} ${PYDISTUTILS_INSTALLARGS})
-
-post-test:
-	${WRKSRC}/build/temp.freebsd*/RunTests
+	@(cd ${INSTALL_WRKSRC}; ${RM} -rf build; \
+		${MKDIR} build/lib.freebsd-13.0-RELEASE-amd64-3.8; \
+		${MKDIR} build/script; \
+		${CP} ${INSTALL_WRKSRC}/${PORTNAME}.cpython-${PYTHON_SUFFIX}.so \
+			build/lib.freebsd-13.0-RELEASE-amd64-3.8; \
+		${CP} ${WRKSRC}/README.md .; \
+		${CP} ${WRKSRC}/tools/parse_disk.py \
+			build/script; )
+	@(cd ${INSTALL_WRKSRC}; ${SETENV} ${MAKE_ENV} ${PYTHON_CMD} \
+		${PYDISTUTILS_SETUP} ${PYDISTUTILS_INSTALL_TARGET} \
+		${PYDISTUTILS_INSTALLARGS} --skip-build )
 
 .include <bsd.port.mk>
