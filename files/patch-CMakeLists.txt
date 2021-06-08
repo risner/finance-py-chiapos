@@ -42,3 +42,12 @@
    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/FiniteStateEntropy/lib
    ${CMAKE_CURRENT_SOURCE_DIR}/src
    ${CMAKE_CURRENT_SOURCE_DIR}/test
+@@ -144,6 +123,9 @@ add_executable(RunTests
+     src/chacha8.c
+     ${BLAKE3_SRC}
+ )
++
++install(TARGETS ProofOfSpace DESTINATION bin)
++install(TARGETS RunTests DESTINATION bin)
+
+ find_package(Threads REQUIRED)
