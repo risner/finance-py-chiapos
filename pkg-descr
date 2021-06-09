@@ -3,7 +3,9 @@ verifier. It exclusively runs on 64 bit architectures. Read the Proof of
 Space document to learn about what proof of space is and how it works.
 
 Note (where should these go?):
-The GHC reference has nothing to do with Haskell.
-HellmanAttacks is experimental, and does not currently compile.
+Any ghc references are not Haskell related, rather a developer initials.
+The HellmanAttacks example is experimental and incomplete upstream.
+
+This port is for the Python module (library).
 
 WWW: https://github.com/Chia-Network/chiapos
