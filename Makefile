@@ -25,9 +25,6 @@ GH_TUPLE=	jarro2783:cxxopts:302302b30839505703d37fb82f536c53cf9172fa:c/src-ext/c
 		gulrak:filesystem:4e21ab305794f5309a1454b4ae82ab9a0f5e0d25:g/src-ext/gulrak
 USE_PYTHON=	autoplist concurrent distutils
 
-# Used to test stripping/not stripping
-WITH_DEBUG=	yes
-
 PYDISTUTILS_INSTALLARGS+=	--skip-build
 
 post-extract:
